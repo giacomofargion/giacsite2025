@@ -61,7 +61,7 @@ const Biography: FC<BiographyProps> = ({ slice }) => {
           <PrismicRichText field={slice.primary.description} />
         </div>
         <Avatar
-          ref={avatarRef} // Pass the ref to the Avatar component
+          // ref={avatarRef} // Pass the ref to the Avatar component
           image={slice.primary.avatar}
           className="row-start-1 max-w-sm md:col-start-2 md:row-end-3"
         />
