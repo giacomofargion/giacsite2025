@@ -1,71 +1,64 @@
 'use client';
 
-import { useEffect, useRef, FC, useState } from "react";
+import { useRef, FC, useState } from "react";
 import { Content, KeyTextField } from "@prismicio/client";
 import { SliceComponentProps } from "@prismicio/react";
 import { gsap } from "gsap";
 import Bounded from "@/app/components/Bounded";
-import MorphingCanvas from "@/slices/Hero/MorphingImage";
+import dynamic from 'next/dynamic';
+import LoadingScreen from "@/app/components/LoadingScreen";  // Import LoadingScreen
+
+const MorphingCanvas = dynamic(() => import("@/slices/Hero/MorphingImage"), {
+  ssr: false,
+});
 
 export type HeroProps = SliceComponentProps<Content.HeroSlice>;
 
 const Hero: FC<HeroProps> = ({ slice }) => {
   const component = useRef(null);
-  const [isModelMounted, setIsModelMounted] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);  // Track loading state
   const timelineRef = useRef(gsap.timeline());
 
-  const handleModelLoaded = (model: { scale: gsap.TweenTarget; }) => {
-    // Create main timeline
+  const handleModelLoaded = (model: { scale: gsap.TweenTarget }) => {
     const tl = timelineRef.current;
-
-    // Clear any existing animations
     tl.clear();
 
-    // Start the sequence
-    tl
-      // First animate the 3D model
-      .to(model.scale, {
-        x: 1,
-        y: 1,
-        z: 1,
+    // First hide the loading screen
+    setIsLoading(false);
+
+    // Then animate the model and text
+    tl.to(model.scale, {
+      x: 1,
+      y: 1,
+      z: 1,
+      duration: 1,
+      ease: "power3.out"
+    })
+    .fromTo(
+      ".name-animation",
+      {
+        x: -100,
+        opacity: 0,
+        rotate: -10
+      },
+      {
+        x: 0,
+        opacity: 1,
+        rotate: 0,
+        ease: "elastic.out(1,0.3)",
         duration: 1,
-        ease: "power3.out"
-      })
-      // Then animate the text with a slight overlap
-      .fromTo(
-        ".name-animation",
-        {
-          x: -100,
-          opacity: 0,
-          rotate: -10
-        },
-        {
-          x: 0,
-          opacity: 1,
-          rotate: 0,
-          ease: "elastic.out(1,0.3)",
-          duration: 1,
-          transformOrigin: "left top",
-          stagger: {
-            each: 0.1,
-            from: "random"
-          }
-        },
-        "-=0.5" // Start text animation slightly before model animation finishes
-      );
+        transformOrigin: "left top",
+        stagger: {
+          each: 0.1,
+          from: "random"
+        }
+      },
+      "-=0.5"
+    );
   };
 
-  useEffect(() => {
-    setIsModelMounted(true);
-    return () => {
-      setIsModelMounted(false);
-      // Kill the timeline on unmount
-      timelineRef.current.kill();
-    };
-  }, []);
-
   const renderLetters = (name: KeyTextField, key: string) => {
-    if (!name) return;
+    if (!name) return null;
     return name.split("").map((letter, index) => (
       <span
         key={`${key}-${index}`}
@@ -81,7 +74,10 @@ const Hero: FC<HeroProps> = ({ slice }) => {
       data-slice-type={slice.slice_type}
       data-slice-variation={slice.variation}
       ref={component}
+      className="relative"
     >
+      {isLoading && <LoadingScreen />}  {/* Show LoadingScreen while loading */}
+
       <div className="grid min-h-[70vh] grid-cols-1 md:grid-cols-2 items-center gap-8">
         <div className="col-start-1 md:col-start-1 md:row-start-1">
           <h1
@@ -99,11 +95,9 @@ const Hero: FC<HeroProps> = ({ slice }) => {
           </h1>
         </div>
 
-        {isModelMounted && (
-          <div className="col-start-1 md:col-start-2 md:row-start-1 flex justify-center">
-            <MorphingCanvas onLoaded={handleModelLoaded} />
-          </div>
-        )}
+        <div className="col-start-1 md:col-start-2 md:row-start-1 flex justify-center">
+          <MorphingCanvas onLoaded={handleModelLoaded} />
+        </div>
       </div>
     </Bounded>
   );
