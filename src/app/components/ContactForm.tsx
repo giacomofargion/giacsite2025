@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import { useState, FormEvent, useRef } from 'react';
 import { Send, Loader2 } from 'lucide-react';
@@ -81,11 +81,17 @@ export default function ContactForm() {
         throw new Error('EmailJS credentials are missing. Please check your environment variables.');
       }
 
-      // Send email using the form reference
-      const result = await emailjs.sendForm(
+      // Add the user email to the form data so it can be used in the "from" field
+      const formDataWithUserEmail = {
+        ...formData,
+        from_email: formData.email, // Add user's email to the `from_email` field
+      };
+
+      // Send email using the form reference and the modified form data
+      const result = await emailjs.send(
         serviceId,
         templateId,
-        formRef.current,
+        formDataWithUserEmail, // Use modified data with user's email
         publicKey
       );
 
