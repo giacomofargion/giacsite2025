@@ -84,7 +84,11 @@ export default function ContactForm() {
       // Add the user email to the form data so it can be used in the "from" field
       const formDataWithUserEmail = {
         ...formData,
-        from_email: formData.email, // Add user's email to the `from_email` field
+        from_name: formData.name,
+        from_email: formData.email,
+        reply_to: formData.email,   // This makes it the Reply-To address
+        subject: formData.subject,
+        message: formData.message,
       };
 
       // Send email using the form reference and the modified form data
