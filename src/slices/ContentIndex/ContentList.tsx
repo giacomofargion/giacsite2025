@@ -35,7 +35,7 @@ export default function ContentList({
   useEffect(() => {
     // Animate list-items in with a stagger
     const ctx = gsap.context(() => {
-      itemsRef.current.forEach((item, index) => {
+      itemsRef.current.forEach((item) => {
         gsap.fromTo(
           item,
           {
@@ -69,7 +69,7 @@ export default function ContentList({
       // Calculate speed and direction
       const speed = Math.sqrt(Math.pow(mousePos.x - lastMousePos.current.x, 2));
 
-      let ctx = gsap.context(() => {
+      const ctx = gsap.context(() => {
         // Animate the image holder
         if (currentItem !== null) {
           const maxY = window.scrollY + window.innerHeight - 350;

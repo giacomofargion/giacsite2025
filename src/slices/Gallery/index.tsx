@@ -27,7 +27,7 @@ const Gallery = ({ slice }: GalleryProps): JSX.Element => {
 
       gsap.set(items, { opacity: 0, x: (i) => (i % 2 === 0 ? -100 : 100) }); // Set initial state
 
-      Array.from(items).forEach((item, i) => {
+      Array.from(items).forEach((item) => {
         gsap.to(item, {
           opacity: 1,
           x: 0,

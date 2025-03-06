@@ -15,7 +15,7 @@ export default function Avatar({ image, className }: AvatarProps) {
   const component = useRef(null);
 
   useEffect(() => {
-    let ctx = gsap.context(() => {
+    const ctx = gsap.context(() => {
       // Avatar animation
       gsap.fromTo(
         ".avatar",
