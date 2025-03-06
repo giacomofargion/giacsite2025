@@ -1,7 +1,7 @@
 /* eslint-disable react/no-children-prop */
 "use client";
 
-import { useEffect, useRef } from "react";
+import { JSX, useEffect, useRef } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Bounded from "@/app/components/Bounded";
@@ -70,7 +70,7 @@ const Gallery = ({ slice }: GalleryProps): JSX.Element => {
                 <PrismicNextImage
                   field={item.image}
                   className="aspect-square w-full object-cover transition-transform duration-300 group-hover:scale-105 group-hover:brightness-75"
-                  alt={item.image.alt || ""}
+                  alt=""
                 />
               </div>
             </PrismicLink>

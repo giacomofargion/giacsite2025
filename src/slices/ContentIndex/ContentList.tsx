@@ -23,7 +23,7 @@ export default function ContentList({
   viewMoreText = "Read More",
 }: ContentListProps) {
   const component = useRef(null);
-  const itemsRef = useRef<Array<HTMLLIElement | null>>([]);
+  const itemsRef = useRef<Array<HTMLLIElement | null>>([]); // Array of LI elements
 
   const revealRef = useRef(null);
   const [currentItem, setCurrentItem] = useState<null | number>(null);
@@ -47,14 +47,13 @@ export default function ContentList({
             y: 0,
             duration: 1.3,
             ease: "elastic.out(1,0.3)",
-            // stagger: 0.2,
             scrollTrigger: {
               trigger: item,
               start: "top bottom-=100px",
               end: "bottom center",
               toggleActions: "play none none none",
             },
-          },
+          }
         );
       });
 
@@ -142,7 +141,9 @@ export default function ContentList({
         {items.map((post, index) => (
           <li
             key={index}
-            ref={(el) => (itemsRef.current[index] = el)}
+            ref={(el) => {
+              itemsRef.current[index] = el; // Store the ref in the array
+            }}
             onMouseEnter={() => onMouseEnter(index)}
             className="list-item opacity-0"
           >
@@ -153,13 +154,6 @@ export default function ContentList({
             >
               <div className="flex flex-col">
                 <span className="text-3xl font-bold">{post.data.title}</span>
-                {/* <div className="flex gap-3 text-yellow-400">
-                  {post.tags.map((tag, index) => (
-                    <span key={index} className="text-lg font-bold">
-                      {tag}
-                    </span>
-                  ))}
-                </div> */}
               </div>
               <span className="ml-auto flex items-center gap-2 text-xl font-medium md:ml-0">
                 {viewMoreText} <MdArrowOutward />
