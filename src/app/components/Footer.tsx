@@ -5,7 +5,7 @@ import { PrismicNextLink } from "@prismicio/next";
 import Link from "next/link";
 import Bounded from "./Bounded";
 import { isFilled } from "@prismicio/client";
-import { FaTwitter, FaBandcamp } from "react-icons/fa6";
+import { FaTwitter, FaBandcamp, FaInstagram, FaSpotify, FaYoutube } from "react-icons/fa6";
 
 export default async function Footer() {
   const client = createClient();
@@ -75,6 +75,33 @@ export default async function Footer() {
               aria-label={settings.data.name + " on Twitter"}
             >
               <FaTwitter />
+            </PrismicNextLink>
+          )}
+           {isFilled.link(settings.data.instagram_link) && (
+            <PrismicNextLink
+              field={settings.data.instagram_link}
+              className="p-2 text-2xl text-slate-300 transition-all duration-150 hover:scale-125 hover:text-yellow-400"
+              aria-label={settings.data.name + " on Instagram"}
+            >
+              <FaInstagram />
+            </PrismicNextLink>
+          )}
+          {isFilled.link(settings.data.spotify_link) && (
+            <PrismicNextLink
+              field={settings.data.spotify_link}
+              className="p-2 text-2xl text-slate-300 transition-all duration-150 hover:scale-125 hover:text-yellow-400"
+              aria-label={settings.data.name + " on Spotify"}
+            >
+              <FaSpotify />
+            </PrismicNextLink>
+          )}
+          {isFilled.link(settings.data.youtube_link) && (
+            <PrismicNextLink
+              field={settings.data.youtube_link}
+              className="p-2 text-2xl text-slate-300 transition-all duration-150 hover:scale-125 hover:text-yellow-400"
+              aria-label={settings.data.name + " on Youtube"}
+            >
+              <FaYoutube />
             </PrismicNextLink>
           )}
         </div>

@@ -51,6 +51,39 @@
           "repeat": false
         }
       },
+      "instagram_link": {
+        "type": "Link",
+        "config": {
+          "label": "Instagram_link",
+          "placeholder": "",
+          "select": null,
+          "allowTargetBlank": true,
+          "allowText": true,
+          "repeat": false
+        }
+      },
+      "spotify_link": {
+        "type": "Link",
+        "config": {
+          "label": "Spotify_link",
+          "placeholder": "",
+          "select": null,
+          "allowTargetBlank": true,
+          "allowText": true,
+          "repeat": false
+        }
+      },
+      "youtube_link": {
+        "type": "Link",
+        "config": {
+          "label": "Youtube_link",
+          "placeholder": "",
+          "select": null,
+          "allowTargetBlank": true,
+          "allowText": true,
+          "repeat": false
+        }
+      },
       "bandcamp_link": {
         "type": "Link",
         "config": {
@@ -60,6 +93,13 @@
           "allowTargetBlank": true,
           "allowText": true,
           "repeat": false
+        }
+      },
+      "slices": {
+        "type": "Slices",
+        "fieldset": "Slice Zone",
+        "config": {
+          "choices": {}
         }
       }
     },

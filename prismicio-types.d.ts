@@ -340,6 +340,8 @@ export interface SettingsDocumentDataNavItemItem {
   label: prismic.KeyTextField;
 }
 
+type SettingsDocumentDataSlicesSlice = never;
+
 /**
  * Content for Settings documents
  */
@@ -384,6 +386,57 @@ interface SettingsDocumentData {
   >;
 
   /**
+   * Instagram_link field in *Settings*
+   *
+   * - **Field Type**: Link
+   * - **Placeholder**: *None*
+   * - **API ID Path**: settings.instagram_link
+   * - **Tab**: Main
+   * - **Documentation**: https://prismic.io/docs/field#link-content-relationship
+   */
+  instagram_link: prismic.LinkField<
+    string,
+    string,
+    unknown,
+    prismic.FieldState,
+    never
+  >;
+
+  /**
+   * Spotify_link field in *Settings*
+   *
+   * - **Field Type**: Link
+   * - **Placeholder**: *None*
+   * - **API ID Path**: settings.spotify_link
+   * - **Tab**: Main
+   * - **Documentation**: https://prismic.io/docs/field#link-content-relationship
+   */
+  spotify_link: prismic.LinkField<
+    string,
+    string,
+    unknown,
+    prismic.FieldState,
+    never
+  >;
+
+  /**
+   * Youtube_link field in *Settings*
+   *
+   * - **Field Type**: Link
+   * - **Placeholder**: *None*
+   * - **API ID Path**: settings.youtube_link
+   * - **Tab**: Main
+   * - **Documentation**: https://prismic.io/docs/field#link-content-relationship
+   */
+  youtube_link: prismic.LinkField<
+    string,
+    string,
+    unknown,
+    prismic.FieldState,
+    never
+  >;
+
+  /**
    * Bandcamp Link field in *Settings*
    *
    * - **Field Type**: Link
@@ -398,7 +451,18 @@ interface SettingsDocumentData {
     unknown,
     prismic.FieldState,
     never
-  > /**
+  >;
+
+  /**
+   * Slice Zone field in *Settings*
+   *
+   * - **Field Type**: Slice Zone
+   * - **Placeholder**: *None*
+   * - **API ID Path**: settings.slices[]
+   * - **Tab**: Main
+   * - **Documentation**: https://prismic.io/docs/field#slices
+   */
+  slices: prismic.SliceZone<SettingsDocumentDataSlicesSlice> /**
    * Meta Title field in *Settings*
    *
    * - **Field Type**: Text
@@ -1084,6 +1148,7 @@ declare module "@prismicio/client" {
       SettingsDocument,
       SettingsDocumentData,
       SettingsDocumentDataNavItemItem,
+      SettingsDocumentDataSlicesSlice,
       WorkDocument,
       WorkDocumentData,
       WorkDocumentDataSlicesSlice,
