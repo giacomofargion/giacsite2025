@@ -6,7 +6,7 @@ import { SliceComponentProps } from "@prismicio/react";
 import { gsap } from "gsap";
 import Bounded from "@/app/components/Bounded";
 import dynamic from 'next/dynamic';
-import LoadingScreen from "@/app/components/LoadingScreen";  // Import LoadingScreen
+import LoadingScreen from "@/app/components/LoadingScreen";
 
 const MorphingCanvas = dynamic(() => import("@/slices/Hero/MorphingImage"), {
   ssr: false,
@@ -16,7 +16,7 @@ export type HeroProps = SliceComponentProps<Content.HeroSlice>;
 
 const Hero: FC<HeroProps> = ({ slice }) => {
   const component = useRef(null);
-  const [isLoading, setIsLoading] = useState(true);  // Track loading state
+  const [isLoading, setIsLoading] = useState(true);
   const timelineRef = useRef(gsap.timeline());
 
   const handleModelLoaded = (model: { scale: gsap.TweenTarget }) => {
@@ -76,20 +76,20 @@ const Hero: FC<HeroProps> = ({ slice }) => {
       ref={component}
       className="relative"
     >
-      {isLoading && <LoadingScreen />}  {/* Show LoadingScreen while loading */}
+      {isLoading && <LoadingScreen />}
 
       <div className="grid min-h-[70vh] grid-cols-1 md:grid-cols-2 items-center gap-8">
         <div className="col-start-1 md:col-start-1 md:row-start-1">
           <h1
-            className="mb-8 text-[clamp(3rem,18vmin,18rem)] font-extrabold leading-none tracking-tighter"
+            className="mb-8 text-[clamp(3rem,14vmin,14rem)] font-extrabold leading-none tracking-tighter"
             aria-label={
               slice.primary.first_name + " " + slice.primary.last_name
             }
           >
-            <span className="block text-red-500">
+            <span className="block text-red-500 whitespace-nowrap">
               {renderLetters(slice.primary.first_name, "first")}
             </span>
-            <span className="-mt-[.2em] block text-slate-500">
+            <span className="-mt-[.2em] block text-slate-500 whitespace-nowrap">
               {renderLetters(slice.primary.last_name, "last")}
             </span>
           </h1>

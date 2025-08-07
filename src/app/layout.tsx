@@ -31,6 +31,15 @@ export default function RootLayout({
 }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en" className="bg-slate-900 text-slate-100">
+      <head>
+        {/* Preload 3D models for faster loading */}
+        <link rel="preload" href="/models/model-compressed.glb" as="fetch" crossOrigin="anonymous" />
+        <link rel="dns-prefetch" href="https://www.gstatic.com" />
+        <link rel="preconnect" href="https://www.gstatic.com" />
+
+        {/* Preload critical resources */}
+        <link rel="preload" href="/noisetexture.jpg" as="image" />
+      </head>
       <body className={clsx(urbanist.className, "relative min-h-screen")}>
         <Header />
         {children}

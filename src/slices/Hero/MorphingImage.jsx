@@ -1,23 +1,59 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
 import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader';
 import gsap from 'gsap';
 
+const useConnectionSpeed = () => {
+  const [isSlowConnection, setIsSlowConnection] = useState(false);
 
+  useEffect(() => {
+    if ('connection' in navigator) {
+      const connection = navigator.connection;
+      const isSlow = connection.effectiveType === 'slow-2g' ||
+                     connection.effectiveType === '2g' ||
+                     connection.downlink < 1;
+      setIsSlowConnection(isSlow);
+    }
+  }, []);
+
+  return isSlowConnection;
+};
 
 const MorphingImage = ({ onLoaded }) => {
+  const isSlowConnection = useConnectionSpeed();
   const mountRef = useRef(null);
   const sceneRef = useRef(null);
   const rendererRef = useRef(null);
   const frameIdRef = useRef(0);
   const modelRef = useRef(null);
+  const [loadingProgress, setLoadingProgress] = useState(0);
+  const [shouldLoad, setShouldLoad] = useState(false);
+
+  // Intersection Observer to only load when visible
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setShouldLoad(true);
+          observer.disconnect();
+        }
+      },
+      { threshold: 0.1 }
+    );
+
+    if (mountRef.current) {
+      observer.observe(mountRef.current);
+    }
+
+    return () => observer.disconnect();
+  }, []);
 
   useEffect(() => {
-    if (!mountRef.current) return;
+    if (!shouldLoad || !mountRef.current) return;
 
     // Scene setup with performance optimizations
     const scene = new THREE.Scene();
@@ -30,22 +66,23 @@ const MorphingImage = ({ onLoaded }) => {
     };
 
     // Camera optimization
-    const camera = new THREE.PerspectiveCamera(35, sizes.width / sizes.height, 0.1, 100);
+    const camera = new THREE.PerspectiveCamera(35, sizes.width / sizes.height, 0.1, 50);
     camera.position.z = 2;
     scene.add(camera);
 
     // Renderer optimization
     const renderer = new THREE.WebGLRenderer({
-      antialias: true,
+      antialias: false,
       alpha: true,
       powerPreference: 'high-performance',
-      precision: 'mediump'
+      precision: 'lowp' // Use low precision for better performance
     });
     rendererRef.current = renderer;
     renderer.setSize(sizes.width, sizes.height);
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
     renderer.setClearColor(0x000000, 0);
     renderer.outputColorSpace = THREE.SRGBColorSpace;
+    renderer.shadowMap.enabled = false;
     mountRef.current.appendChild(renderer.domElement);
 
     // Controls optimization
@@ -66,17 +103,16 @@ const MorphingImage = ({ onLoaded }) => {
     directionalLight.position.set(10, 10, 10);
     scene.add(directionalLight);
 
-    // DRACO loader setup for compressed models
+    // DRACO loader setup
     const dracoLoader = new DRACOLoader();
     dracoLoader.setDecoderPath('https://www.gstatic.com/draco/versioned/decoders/1.5.6/');
     dracoLoader.preload();
 
-    // Model loader with DRACO compression
     const loader = new GLTFLoader();
     loader.setDRACOLoader(dracoLoader);
 
     loader.load(
-      '/models/model.glb',
+      '/models/model-compressed.glb',
       (gltf) => {
         modelRef.current = gltf.scene;
         modelRef.current.scale.set(10, 15, 15);
@@ -87,6 +123,12 @@ const MorphingImage = ({ onLoaded }) => {
             node.frustumCulled = true;
             node.castShadow = false;
             node.receiveShadow = false;
+
+            // Additional optimizations
+            if (node.geometry) {
+              node.geometry.computeBoundingSphere();
+              node.geometry.computeBoundingBox();
+            }
           }
         });
 
@@ -98,22 +140,14 @@ const MorphingImage = ({ onLoaded }) => {
 
         gsap.fromTo(
           modelRef.current.scale,
-          {
-            x: 0,
-            y: 0,
-            z: 0
-          },
-          {
-            x: 1,
-            y: 1,
-            z: 1,
-            duration: 1,
-            ease: "power3.out"
-          }
+          { x: 0, y: 0, z: 0 },
+          { x: 1, y: 1, z: 1, duration: 1, ease: "power3.out" }
         );
       },
       (progress) => {
-        console.log('Loading progress:', (progress.loaded / progress.total) * 100, '%');
+        const percent = (progress.loaded / progress.total) * 100;
+        setLoadingProgress(percent);
+        console.log('Loading progress:', percent, '%');
       },
       (error) => {
         console.error('Error loading model:', error);
@@ -126,7 +160,7 @@ const MorphingImage = ({ onLoaded }) => {
       const deltaTime = currentTime - previousTime;
       previousTime = currentTime;
 
-      if (deltaTime < 32) { // Cap at ~30fps
+      if (deltaTime < 32) {
         controls.update();
         renderer.render(scene, camera);
       }
@@ -162,7 +196,6 @@ const MorphingImage = ({ onLoaded }) => {
         cancelAnimationFrame(frameIdRef.current);
       }
 
-      // Cleanup resources
       if (rendererRef.current) {
         rendererRef.current.dispose();
         rendererRef.current.forceContextLoss();
@@ -186,17 +219,53 @@ const MorphingImage = ({ onLoaded }) => {
       sceneRef.current = null;
       rendererRef.current = null;
     };
-  }, [onLoaded]);
+  }, [shouldLoad, onLoaded]);
+
+  if (isSlowConnection) {
+    return (
+      <div className="w-full h-[500px] flex items-center justify-center bg-gradient-to-br from-gray-900 to-gray-700">
+        <div className="text-center text-white">
+          <div className="text-6xl mb-4">🚀</div>
+          <div className="text-xl mb-2">Interactive 3D Model</div>
+          <div className="text-sm opacity-70">Optimized for your connection</div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div
       ref={mountRef}
-      className="webgl w-full h-[500px]"
+      className="webgl w-full h-[500px] relative"
       style={{
         contain: 'paint',
         willChange: 'transform'
       }}
-    />
+    >
+      {!shouldLoad && (
+        <div className="absolute inset-0 flex items-center justify-center bg-black/20 backdrop-blur-sm">
+          <div className="text-white text-center">
+            <div className="text-2xl mb-4 font-bold">Preparing 3D Model</div>
+            <div className="text-sm opacity-80">Loading when visible...</div>
+          </div>
+        </div>
+      )}
+
+      {shouldLoad && loadingProgress < 100 && (
+        <div className="absolute inset-0 flex items-center justify-center bg-black/20 backdrop-blur-sm">
+          <div className="text-white text-center">
+            <div className="text-2xl mb-4 font-bold">Loading 3D Model</div>
+            <div className="w-48 h-3 bg-gray-700 rounded-full overflow-hidden">
+              <div
+                className="h-full bg-gradient-to-r from-blue-500 to-purple-500 rounded-full transition-all duration-300"
+                style={{ width: `${loadingProgress}%` }}
+              />
+            </div>
+            <div className="text-sm mt-3 opacity-80">{Math.round(loadingProgress)}%</div>
+          </div>
+        </div>
+      )}
+    </div>
   );
 };
 
