@@ -39,10 +39,15 @@ export default function RootLayout({
 
         {/* Preload critical resources */}
         <link rel="preload" href="/noisetexture.jpg" as="image" />
+
+        {/* Performance optimizations */}
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
       </head>
-      <body className={clsx(urbanist.className, "relative min-h-screen")}>
+      <body className={clsx(urbanist.className, "relative min-h-screen pt-20 md:pt-0")}>
         <Header />
-        {children}
+        <main className="relative z-10">
+          {children}
+        </main>
         <div className="background-gradient absolute inset-0 -z-50 max-h-screen" />
         <div className="pointer-events-none absolute inset-0 -z-40 h-full bg-[url('/noisetexture.jpg')] opacity-20 mix-blend-soft-light"></div>
         <Footer />

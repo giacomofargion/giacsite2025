@@ -18,7 +18,7 @@ export default function NavBar({
 
   return (
     <nav aria-label="Main navigation" className="relative z-50">
-      <div className="fixed top-0 left-0 right-0 backdrop-blur-sm bg-slate-900/30 border-b border-slate-800/20">
+      <div className="backdrop-blur-sm bg-slate-900/30 border-b border-slate-800/20 md:rounded-xl md:mx-4 md:mt-4 md:border md:border-slate-800/20">
         <div className="max-w-7xl mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
             <NameLogo name={settings.data.name} />
