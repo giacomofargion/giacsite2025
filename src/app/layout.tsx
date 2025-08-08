@@ -42,6 +42,14 @@ export default function RootLayout({
 
         {/* Performance optimizations */}
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+
+        {/* Resource hints for faster loading */}
+        <link rel="preload" href="https://www.gstatic.com/draco/versioned/decoders/1.5.6/draco_decoder.js" as="script" />
+        <link rel="preload" href="https://www.gstatic.com/draco/versioned/decoders/1.5.6/draco_decoder.wasm" as="fetch" crossOrigin="anonymous" />
+
+        {/* Preload critical fonts */}
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
       </head>
       <body className={clsx(urbanist.className, "relative min-h-screen pt-20 md:pt-0")}>
         <Header />
@@ -51,6 +59,25 @@ export default function RootLayout({
         <div className="background-gradient absolute inset-0 -z-50 max-h-screen" />
         <div className="pointer-events-none absolute inset-0 -z-40 h-full bg-[url('/noisetexture.jpg')] opacity-20 mix-blend-soft-light"></div>
         <Footer />
+
+        {/* Register service worker for caching */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              if ('serviceWorker' in navigator) {
+                window.addEventListener('load', function() {
+                  navigator.serviceWorker.register('/sw.js')
+                    .then(function(registration) {
+                      console.log('SW registered: ', registration);
+                    })
+                    .catch(function(registrationError) {
+                      console.log('SW registration failed: ', registrationError);
+                    });
+                });
+              }
+            `,
+          }}
+        />
       </body>
 
       <PrismicPreview repositoryName={repositoryName} ></PrismicPreview>

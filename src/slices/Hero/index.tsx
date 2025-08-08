@@ -26,35 +26,62 @@ const Hero: FC<HeroProps> = ({ slice }) => {
     // First hide the loading screen
     setIsLoading(false);
 
-    // Then animate the model and text
+    // Improved animation sequence with better timing
     tl.to(model.scale, {
       x: 1,
       y: 1,
       z: 1,
-      duration: 1,
-      ease: "power3.out"
+      duration: 1.2,
+      ease: "power2.out"
     })
     .fromTo(
       ".name-animation",
       {
         x: -100,
         opacity: 0,
-        rotate: -10
+        rotate: -10,
+        scale: 0.8
       },
       {
         x: 0,
         opacity: 1,
         rotate: 0,
-        ease: "elastic.out(1,0.3)",
-        duration: 1,
+        scale: 1,
+        ease: "back.out(1.7)",
+        duration: 1.4,
         transformOrigin: "left top",
         stagger: {
-          each: 0.1,
+          each: 0.08,
           from: "random"
         }
       },
+      "-=0.8"
+    )
+    .fromTo(
+      ".name-animation",
+      {
+        scale: 1
+      },
+      {
+        scale: 1.05,
+        duration: 0.3,
+        ease: "power2.out",
+        stagger: {
+          each: 0.02,
+          from: "start"
+        }
+      },
       "-=0.5"
-    );
+    )
+    .to(".name-animation", {
+      scale: 1,
+      duration: 0.2,
+      ease: "power2.in",
+      stagger: {
+        each: 0.02,
+        from: "start"
+      }
+    });
   };
 
   const renderLetters = (name: KeyTextField, key: string) => {
@@ -62,7 +89,7 @@ const Hero: FC<HeroProps> = ({ slice }) => {
     return name.split("").map((letter, index) => (
       <span
         key={`${key}-${index}`}
-        className={`name-animation name-animation-${key}-index inline-block opacity-0`}
+        className={`name-animation name-animation-${key}-index inline-block opacity-0 whitespace-nowrap`}
       >
         {letter}
       </span>
